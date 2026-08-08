@@ -1,10 +1,10 @@
-# Grok Imagine Image 2.0 API — Python SDK & MCP Server
+# Grok Imagine Image 2.0 API (Grok Imagine Image 2 API) — Python SDK & MCP Server
 
 [![Powered by MuAPI](https://img.shields.io/badge/Powered%20by-MuAPI-6366f1?style=flat-square)](https://muapi.ai)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/)
 
-A focused Python SDK and MCP server for Grok Imagine Image 2.0 through MuAPI. Generate images from text, edit or combine up to five reference images, upload local assets, and poll asynchronous jobs from Python or an MCP-capable agent.
+A focused Python SDK and MCP server for the Grok Imagine Image 2.0 API through MuAPI. Also known as the Grok Imagine Image 2 API or Grok Imagine API, it provides xAI image generation, text-to-image, image-to-image editing, multi-reference generation, local uploads, and asynchronous job polling from Python or an MCP-capable agent.
 
 > **Availability:** The grok-imagine-image-2 endpoint is listed as upcoming in MuAPI's latest model catalog. This client targets the production endpoint contract and is ready to use as soon as access is enabled for your API key.
 

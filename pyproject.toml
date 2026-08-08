@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "grok-imagine-image-2-api"
 version = "0.1.0"
-description = "Python SDK and MCP server for Grok Imagine Image 2.0 image generation through MuAPI."
+description = "Grok Imagine Image 2.0 API and Grok Imagine Image 2 API Python SDK and MCP server for xAI image generation through MuAPI."
 readme = "README.md"
 requires-python = ">=3.9"
 authors = [{ name = "Anil Matcha" }]
