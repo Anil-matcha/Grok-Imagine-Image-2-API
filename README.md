@@ -8,13 +8,20 @@ A focused Python SDK and MCP server for the Grok Imagine Image 2.0 API through M
 
 > **Availability:** The grok-imagine-image-2 endpoint is listed as upcoming in MuAPI's latest model catalog. This client targets the production endpoint contract and is ready to use as soon as access is enabled for your API key.
 
-## Related projects
+## Related Projects
 
-- [Grok Imagine Image 2.0 on MuAPI](https://muapi.ai/grok-imagine-image-2) — model overview and access.
-- [MuAPI image-generation docs](https://muapi.ai/docs/image-generation) — shared authentication and polling patterns.
+- [MuAPI](https://muapi.ai) — Unified API for image, video, and audio generation across hundreds of AI models.
+- [Grok Imagine Image 2.0 on MuAPI](https://muapi.ai/grok-imagine-image-2) — Official model landing page for Grok Imagine Image 2.0 generation and editing.
+- [Grok Imagine Image 2.0 playground](https://muapi.ai/playground/grok-imagine-image-2) — Try the model in the browser when access is enabled.
+- [MuAPI API reference](https://muapi.ai/docs/api-reference) — REST endpoint and asynchronous prediction lifecycle documentation.
+- [MuAPI access keys](https://muapi.ai/access-keys) — Create the x-api-key credential required by this SDK.
+- [awesome-ai-image-models](https://github.com/Anil-matcha/awesome-ai-image-models) — Compare image models by API, price, quality, and use case.
+- [Awesome-GPT-Image-2-API-Prompts](https://github.com/Anil-matcha/Awesome-GPT-Image-2-API-Prompts) — Reusable prompt patterns for image generation, typography, editing, and visual design.
+- [Open-Generative-AI](https://github.com/Anil-matcha/Open-Generative-AI) — Open-source image and video studio powered by MuAPI.
+- [Generative-Media-Skills](https://github.com/SamurAIGPT/Generative-Media-Skills) — Agent-ready skills for driving image, video, and audio models from coding assistants.
+- [muapi-cli](https://github.com/SamurAIGPT/muapi-cli) — Command-line access to MuAPI image, video, and audio endpoints.
 - [Wan-3.0-API](https://github.com/Anil-matcha/Wan-3.0-API) — the companion Python SDK and MCP server for Wan video generation.
 - [Flux-3-Dev-API](https://github.com/Anil-matcha/Flux-3-Dev-API) — MuAPI access to FLUX image and video workflows.
-- [Open-Generative-AI](https://github.com/Anil-matcha/Open-Generative-AI) — open-source image and video studio powered by MuAPI.
 
 ## Install
 
