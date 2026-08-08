@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "grok-imagine-image-2-api"
+version = "0.1.0"
+description = "Python SDK and MCP server for Grok Imagine Image 2.0 image generation through MuAPI."
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [{ name = "Anil Matcha" }]
+license = { text = "MIT" }
+classifiers = [
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+]
+dependencies = ["requests>=2.28", "python-dotenv>=1.0", "mcp[cli]>=1.0"]
+
+[project.urls]
+Homepage = "https://muapi.ai/grok-imagine-image-2"
+Repository = "https://github.com/Anil-matcha/Grok-Imagine-Image-2-API"
+
+[tool.setuptools]
+py-modules = ["grok_imagine_image_2_api", "mcp_server"]
