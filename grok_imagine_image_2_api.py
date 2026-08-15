@@ -2,7 +2,7 @@
 
 import os
 import time
-from typing import Any, Dict, Iterable, Optional
+from typing import Any, Dict, List, Optional
 
 import requests
 from dotenv import load_dotenv
@@ -10,11 +10,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 DEFAULT_BASE_URL = "https://api.muapi.ai/api/v1"
-MODEL_ENDPOINT = "grok-imagine-image-2"
-MAX_REFERENCE_IMAGES = 5
-SUPPORTED_ASPECT_RATIOS = frozenset(
-    {"1:1", "1:2", "2:1", "9:16", "16:9", "2:3", "3:2", "3:4", "4:3"}
-)
+GENERATE_ENDPOINT = "grok-imagine-image-2"
+EDIT_ENDPOINT = "grok-imagine-image-2-edit"
+SUPPORTED_ASPECT_RATIOS = frozenset({"1:1", "2:3", "3:2", "16:9", "9:16"})
 
 
 class GrokImagineImage2API:
@@ -47,46 +45,38 @@ class GrokImagineImage2API:
         aspect_ratio: str = "1:1",
     ) -> Dict[str, Any]:
         """Generate an image from a text prompt."""
-        return self.generate(prompt, aspect_ratio=aspect_ratio)
-
-    def edit_image(
-        self,
-        prompt: str,
-        images_list: Iterable[str],
-        *,
-        aspect_ratio: str = "1:1",
-    ) -> Dict[str, Any]:
-        """Edit or combine one to five reference images with a text prompt."""
-        references = list(images_list)
-        if not references:
-            raise ValueError("edit_image requires at least one reference image URL.")
-        return self.generate(prompt, images_list=references, aspect_ratio=aspect_ratio)
-
-    def generate(
-        self,
-        prompt: str,
-        *,
-        images_list: Optional[Iterable[str]] = None,
-        aspect_ratio: str = "1:1",
-    ) -> Dict[str, Any]:
-        """Generate an image, optionally conditioned on reference image URLs."""
         if not isinstance(prompt, str) or not prompt.strip():
             raise ValueError("prompt must be a non-empty string.")
         if aspect_ratio not in SUPPORTED_ASPECT_RATIOS:
             supported = ", ".join(sorted(SUPPORTED_ASPECT_RATIOS))
             raise ValueError(f"Unsupported aspect_ratio {aspect_ratio!r}. Choose one of: {supported}.")
 
-        references = list(images_list) if images_list is not None else []
-        if len(references) > MAX_REFERENCE_IMAGES:
-            raise ValueError(f"images_list accepts at most {MAX_REFERENCE_IMAGES} reference images.")
+        payload: Dict[str, Any] = {"prompt": prompt, "aspect_ratio": aspect_ratio}
+        return self._post(GENERATE_ENDPOINT, payload)
 
-        payload: Dict[str, Any] = {
-            "prompt": prompt,
-            "aspect_ratio": aspect_ratio,
-        }
-        if references:
-            payload["images_list"] = references
-        return self._post(MODEL_ENDPOINT, payload)
+    def edit_image(
+        self,
+        prompt: str,
+        request_id: str,
+        *,
+        mask_indexs: Optional[List[int]] = None,
+    ) -> Dict[str, Any]:
+        """Apply a targeted follow-up edit to a prior Grok Imagine Image 2.0 generation.
+
+        `request_id` must be the request_id returned by a previous
+        `text_to_image()` (or `edit_image()`) call — this model edits its own
+        prior generations, not an arbitrary uploaded image. Optionally scope
+        the edit to specific segments of the source image with `mask_indexs`.
+        """
+        if not isinstance(prompt, str) or not prompt.strip():
+            raise ValueError("prompt must be a non-empty string.")
+        if not request_id:
+            raise ValueError("edit_image requires the request_id of a prior generation to edit.")
+
+        payload: Dict[str, Any] = {"prompt": prompt, "request_id": request_id}
+        if mask_indexs:
+            payload["mask_indexs"] = list(mask_indexs)
+        return self._post(EDIT_ENDPOINT, payload)
 
     def upload_file(self, file_path: str) -> Dict[str, Any]:
         """Upload a local reference asset for a later generation request."""

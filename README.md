@@ -4,9 +4,9 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/)
 
-A focused Python SDK and MCP server for the Grok Imagine Image 2.0 API through MuAPI. Also known as the Grok Imagine Image 2 API or Grok Imagine API, it provides xAI image generation, text-to-image, image-to-image editing, multi-reference generation, local uploads, and asynchronous job polling from Python or an MCP-capable agent.
+A focused Python SDK and MCP server for the Grok Imagine Image 2.0 API through MuAPI. Also known as the Grok Imagine Image 2 API or Grok Imagine API, it provides xAI image generation, text-to-image, chained follow-up image editing, local uploads, and asynchronous job polling from Python or an MCP-capable agent.
 
-> **Availability:** The grok-imagine-image-2 endpoint is listed as upcoming in MuAPI's latest model catalog. This client targets the production endpoint contract and is ready to use as soon as access is enabled for your API key.
+> **Availability:** Live on MuAPI as two endpoints — `grok-imagine-image-2` for text-to-image and `grok-imagine-image-2-edit` for follow-up edits.
 
 ## Related Projects
 
@@ -54,25 +54,23 @@ print(result)
 
 The API is asynchronous: submit a prompt, keep the returned request ID, and poll until the task is completed.
 
-## Image editing and multi-reference generation
+## Follow-up editing
 
-Pass one or more public image URLs to **edit_image()**. The model accepts up to five references in one request, which is useful for combining a subject, location, props, and a target style.
+Grok Imagine Image 2.0's edit model doesn't take a freshly uploaded photo — it applies a targeted edit to an image it previously generated, referenced by that job's `request_id`. Pass **edit_image()** the `request_id` from a prior `text_to_image()` (or `edit_image()`) call along with a prompt describing the change:
 
 ~~~python
-job = api.edit_image(
-    prompt="Place the subject in a rainy neon street while preserving their face and clothing.",
-    images_list=[
-        "https://example.com/subject.jpg",
-        "https://example.com/street.jpg",
-    ],
-    aspect_ratio="9:16",
-)
+job = api.text_to_image("A raccoon in a teal Hawaiian shirt at a beach club table", aspect_ratio="1:1")
+base = api.wait_for_completion(job["request_id"])
 
-result = api.wait_for_completion(job["request_id"])
+edit_job = api.edit_image(
+    prompt="Change the Hawaiian shirt to a plain white t-shirt, keep everything else unchanged.",
+    request_id=job["request_id"],
+)
+result = api.wait_for_completion(edit_job["request_id"])
 print(result)
 ~~~
 
-For a single method that handles both modes, use **generate(prompt, images_list=...)**.
+Pass an optional `mask_indexs` list of integers to scope the edit to specific segments of the source image instead of the whole frame. Each edit call returns its own `request_id`, so edits can be chained repeatedly to keep refining the same image.
 
 ## Upload a local reference
 
@@ -81,15 +79,14 @@ uploaded = api.upload_file("reference.png")
 print(uploaded)
 ~~~
 
-Use the URL returned by the upload endpoint in **images_list** for a later generation or edit request.
+Useful for storing your own reference assets alongside a job; note that Grok Imagine Image 2.0 itself doesn't accept uploaded images as edit input — see **Follow-up editing** above.
 
 ## API surface
 
 | Method | Purpose |
 | --- | --- |
 | **text_to_image()** | Create an image from a text prompt. |
-| **edit_image()** | Edit or combine one to five reference image URLs. |
-| **generate()** | Unified text-to-image and image-edit entrypoint. |
+| **edit_image()** | Apply a follow-up edit to a prior generation, referenced by its request_id. |
 | **upload_file()** | Upload a local reference asset. |
 | **get_result() / wait_for_completion()** | Retrieve an asynchronous job and wait for its output. |
 
@@ -97,7 +94,7 @@ Use the URL returned by the upload endpoint in **images_list** for a later gener
 
 The current catalog contract supports:
 
-**1:1**, **1:2**, **2:1**, **9:16**, **16:9**, **2:3**, **3:2**, **3:4**, and **4:3**.
+**1:1**, **2:3**, **3:2**, **16:9**, and **9:16**.
 
 ## MCP server
 
@@ -107,7 +104,7 @@ Expose the model to MCP-capable clients:
 python mcp_server.py
 ~~~
 
-The server provides **text_to_image**, **edit_image**, **generate_image**, and **get_task_status** tools. Configure it in an MCP client with the repository's Python interpreter and pass **MUAPI_API_KEY** through the process environment.
+The server provides **text_to_image**, **edit_image**, and **get_task_status** tools. Configure it in an MCP client with the repository's Python interpreter and pass **MUAPI_API_KEY** through the process environment.
 
 Example configuration:
 
@@ -129,11 +126,12 @@ Example configuration:
 
 The client calls these MuAPI paths beneath the configured base URL:
 
-- **POST /grok-imagine-image-2**
+- **POST /grok-imagine-image-2** — `{prompt, aspect_ratio}`
+- **POST /grok-imagine-image-2-edit** — `{prompt, request_id, mask_indexs?}`
 - **POST /upload_file**
 - **GET /predictions/{request_id}/result**
 
-The SDK uses the **x-api-key** header and JSON request bodies. The model endpoint accepts **prompt**, optional **images_list**, and **aspect_ratio**.
+The SDK uses the **x-api-key** header and JSON request bodies.
 
 ## Development
 

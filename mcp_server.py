@@ -1,7 +1,7 @@
 """MCP server exposing the Grok Imagine Image 2.0 Python client as agent tools."""
 
 import json
-from typing import Optional
+from typing import List, Optional
 
 from mcp.server.fastmcp import FastMCP
 
@@ -25,24 +25,12 @@ def text_to_image(prompt: str, aspect_ratio: str = "1:1") -> str:
 
 
 @mcp.tool()
-def edit_image(prompt: str, images_list: list[str], aspect_ratio: str = "1:1") -> str:
-    """Edit or combine one to five reference image URLs."""
+def edit_image(prompt: str, request_id: str, mask_indexs: Optional[List[int]] = None) -> str:
+    """Apply a targeted follow-up edit to a prior Grok Imagine Image 2.0 generation,
+    identified by the request_id it returned. Optionally scope the edit to
+    specific segments of the source image with mask_indexs."""
     return json.dumps(
-        _api().edit_image(prompt, images_list, aspect_ratio=aspect_ratio),
-        indent=2,
-        ensure_ascii=False,
-    )
-
-
-@mcp.tool()
-def generate_image(
-    prompt: str,
-    images_list: Optional[list[str]] = None,
-    aspect_ratio: str = "1:1",
-) -> str:
-    """Generate an image with an optional list of reference images."""
-    return json.dumps(
-        _api().generate(prompt, images_list=images_list, aspect_ratio=aspect_ratio),
+        _api().edit_image(prompt, request_id, mask_indexs=mask_indexs),
         indent=2,
         ensure_ascii=False,
     )

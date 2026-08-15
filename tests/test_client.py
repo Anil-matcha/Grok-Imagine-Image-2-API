@@ -11,7 +11,7 @@ def response_with(payload):
 
 
 class GrokImagineImage2APITest(unittest.TestCase):
-    def test_text_to_image_posts_to_model_endpoint(self):
+    def test_text_to_image_posts_to_generate_endpoint(self):
         session = Mock()
         session.post.return_value = response_with({"request_id": "req_123", "status": "processing"})
         api = GrokImagineImage2API(api_key="test-key", session=session)
@@ -26,11 +26,32 @@ class GrokImagineImage2APITest(unittest.TestCase):
             timeout=120,
         )
 
-    def test_edit_image_rejects_more_than_five_references(self):
+    def test_text_to_image_rejects_unsupported_aspect_ratio(self):
         api = GrokImagineImage2API(api_key="test-key", session=Mock())
 
         with self.assertRaises(ValueError):
-            api.edit_image("Combine these references", ["https://example.com/a.png"] * 6)
+            api.text_to_image("A geometric sunset", aspect_ratio="4:3")
+
+    def test_edit_image_posts_to_edit_endpoint_with_request_id(self):
+        session = Mock()
+        session.post.return_value = response_with({"request_id": "req_456", "status": "processing"})
+        api = GrokImagineImage2API(api_key="test-key", session=session)
+
+        result = api.edit_image("Change the jacket to teal", "req_123", mask_indexs=[0, 2])
+
+        self.assertEqual(result["request_id"], "req_456")
+        session.post.assert_called_once_with(
+            "https://api.muapi.ai/api/v1/grok-imagine-image-2-edit",
+            json={"prompt": "Change the jacket to teal", "request_id": "req_123", "mask_indexs": [0, 2]},
+            headers={"x-api-key": "test-key", "Content-Type": "application/json"},
+            timeout=120,
+        )
+
+    def test_edit_image_requires_source_request_id(self):
+        api = GrokImagineImage2API(api_key="test-key", session=Mock())
+
+        with self.assertRaises(ValueError):
+            api.edit_image("Change the jacket to teal", "")
 
     def test_wait_for_completion_polls_until_done(self):
         session = Mock()
