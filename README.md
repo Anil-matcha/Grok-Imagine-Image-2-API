@@ -18,7 +18,7 @@ A focused Python SDK and MCP server for the Grok Imagine Image 2.0 API through M
 - [awesome-ai-image-models](https://github.com/Anil-matcha/awesome-ai-image-models) — Compare image models by API, price, quality, and use case.
 - [Awesome-GPT-Image-2-API-Prompts](https://github.com/Anil-matcha/Awesome-GPT-Image-2-API-Prompts) — Reusable prompt patterns for image generation, typography, editing, and visual design.
 - [Open-Generative-AI](https://github.com/Anil-matcha/Open-Generative-AI) — Open-source image and video studio powered by MuAPI.
-- [Generative-Media-Skills](https://github.com/SamurAIGPT/Generative-Media-Skills) — Agent-ready skills for driving image, video, and audio models from coding assistants.
+- [muapi-skills](https://github.com/SamurAIGPT/muapi-skills) — Agent-ready skills for driving image, video, and audio models from coding assistants.
 - [muapi-cli](https://github.com/SamurAIGPT/muapi-cli) — Command-line access to MuAPI image, video, and audio endpoints.
 - [Wan-3.0-API](https://github.com/Anil-matcha/Wan-3.0-API) — the companion Python SDK and MCP server for Wan video generation.
 - [Flux-3-Dev-API](https://github.com/Anil-matcha/Flux-3-Dev-API) — MuAPI access to FLUX image and video workflows.
